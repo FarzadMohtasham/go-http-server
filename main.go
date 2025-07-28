@@ -1,15 +1,14 @@
 package main
 
 import (
-	"log"
 	"net/http"
 )
 
-type server struct {
+type api struct {
 	addr string
 }
 
-func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (s *api) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		switch r.URL.Path {
@@ -27,8 +26,12 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	s := &server{addr: ":8880"}
-	if err := http.ListenAndServe(s.addr, s); err != nil {
-		log.Fatal(err)
+	api := &api{addr: ":8880"}
+
+	srv := &http.Server{
+		Addr:    api.addr,
+		Handler: api,
 	}
+
+	srv.ListenAndServe()
 }
