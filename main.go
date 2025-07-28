@@ -8,30 +8,26 @@ type api struct {
 	addr string
 }
 
-func (s *api) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodGet:
-		switch r.URL.Path {
-		case "/":
-			w.Write([]byte("This is the root path!"))
-			return
-		case "/home":
-			w.Write([]byte("This is the home path!"))
-			return
-		default:
-			w.Write([]byte("Not valid path!!!"))
-			return
-		}
-	}
+func (s *api) getUsersHandler(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Users list: ..."))
+}
+
+func (s *api) createUsersHandler(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Creating a new user"))
 }
 
 func main() {
 	api := &api{addr: ":8880"}
 
+	mux := http.NewServeMux()
+
 	srv := &http.Server{
 		Addr:    api.addr,
-		Handler: api,
+		Handler: mux,
 	}
+
+	mux.HandleFunc("GET /users", api.getUsersHandler)
+	mux.HandleFunc("POST /users", api.createUsersHandler)
 
 	srv.ListenAndServe()
 }
